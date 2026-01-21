@@ -66,15 +66,29 @@ try:
 
 
     memory_capacity = []
+    valid_memory_values = {"256 GB", "512 GB", "1 TB"} 
+
     for mem_div in soup.select('.series-item.series-characteristic'):
+
+        if 'hidden' in mem_div.get('class', []):
+            continue
+
         a_tag = mem_div.find('a')
-        if a_tag:
+        if a_tag and a_tag.get_text(strip=True):  
             text = a_tag.get_text(strip=True)
-            # Извлекаем только цифры и единицы измерения
-            match = re.search(r'([0-9]+\\s*(GB|Tb|Gb|TB))', text, re.IGNORECASE)
+
+           
+            match = re.search(r'^(\d+)\s*(GB|Tb|Gb|TB)$', text, re.IGNORECASE)
             if match:
-                memory_capacity .append(match.group(1))
-    print(memory_capacity)
+                value = match.group(0).upper() 
+                if value in valid_memory_values:  
+                    memory_capacity.append(value)
+
+    memory_capacity = list(dict.fromkeys(memory_capacity))
+    #print(memory_capacity)
+
+
+
 
 
 
