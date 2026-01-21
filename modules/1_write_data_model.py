@@ -88,10 +88,17 @@ try:
     #print(memory_capacity)
 
 
+    manufacturer = None
 
+    
+    for span in soup.find_all('span'):
+        if span.text.strip() == 'Виробник':
+            next_span = span.find_next('span')
+            if next_span:
+                manufacturer = next_span.text.strip()
+                break
 
-
-
+    #print(f"Виробник: {manufacturer}")
 
 
 except AttributeError as e:
