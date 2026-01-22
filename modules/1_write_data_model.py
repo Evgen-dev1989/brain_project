@@ -89,8 +89,6 @@ try:
 
 
     manufacturer = None
-
-    
     for span in soup.find_all('span'):
         if span.text.strip() == 'Виробник':
             next_span = span.find_next('span')
@@ -98,8 +96,12 @@ try:
                 manufacturer = next_span.text.strip()
                 break
 
-    #print(f"Виробник: {manufacturer}")
-
+    #print(f"manufacturer: {manufacturer}")
+    for price in soup.find("div", class_="price-wrapper"):
+        if price:
+            price = price.find_next('span').text.strip()
+            print(price)
+            break
 
 except AttributeError as e:
     print(f"Error extracting product name: {e}")
@@ -108,8 +110,6 @@ except AttributeError as e:
 
 
 
-    # memory_capacity = models.CharField(max_length=255, null=True)   
-    # manufacturer = models.CharField(max_length=255, null=True)   
     # price = models.CharField(max_length=100, null=True)    
     # promotional_price = models.CharField(max_length=100, null=True)      
     # product_code = models.CharField(max_length=255, null=True)  
