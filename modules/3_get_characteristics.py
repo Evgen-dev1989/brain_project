@@ -85,20 +85,43 @@ try:
         else:
             print("Don't found div with title resolution_value")
 
-
-        phone = Phone.objects.create(
-        
-            screen_diagonal=diagonal_value,
-            display_resolutionn=display_resolution
-        )
-        print(f"Save: {phone}")
     else:
         print("Don't found display block")
 
+    characteristics = {}
+
+    for block in soup.find_all("div", class_="br-pr-chr-item"):
+
+        category = block.find("h3").text.strip()
+        characteristics[category] = {}
+
+        for div in block.find_all("div"):
+            spans = div.find_all("span")
+            if len(spans) >= 2:
+      
+                key = spans[0].text.strip()
+             
+                value = spans[1].text.strip()
+              
+                link = spans[1].find("a")
+                if link:
+                    value = link.text.strip()
+
+                characteristics[category][key] = value
 
 
+    for category, attrs in characteristics.items():
+        print(f"{category}:")
+        for key, value in attrs.items():
+            print(f"  {key}: {value}")
 
-
+    # phone = Phone.objects.create(
         
+        #     screen_diagonal=diagonal_value,
+        #     display_resolution=display_resolution
+        #     characteristics=characteristics
+        # )
+        # print(f"Save: {phone}")
+
 except Exception as e:
     print(f"Error: {e}")
