@@ -11,10 +11,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 
 
-
-
-
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 workspace_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -32,52 +28,56 @@ sys.path.append(BASE_DIR)
 import modules.load_django
 from parser_app.models import Phone
 
-try:
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
-
-
-    url = "https://brain.com.ua/ukr/Mobilniy_telefon_Apple_iPhone_16_Pro_Max_256GB_Black_Titanium-p1145443.html"
-    driver.get(url)
-
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-
+def get_link_photos(soup):
     try:
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "br-prs-f")))
 
-    except:
-        print("Don't wait for loading page")
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service)
 
 
-    html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
+        url = "https://brain.com.ua/ukr/Mobilniy_telefon_Apple_iPhone_16_Pro_Max_256GB_Black_Titanium-p1145443.html"
+        driver.get(url)
 
-    link_photos = []
-    photo_div = soup.find("div", class_="br-prs-f main-pictures-block slick-initialized slick-slider slick-vertical")
-    if photo_div:
-        
-        for img_tag in photo_div.find_all("img"):
-            if img_tag.has_attr("src"):
-                link_photos.append(img_tag["src"])
-            elif img_tag.has_attr("data-observe-src"):
-                link_photos.append(img_tag["data-observe-src"])
-    else:
-        print('Don`t found div with class "br-prs-f main-pictures-block slick-initialized slick-slider slick-vertical"')
-       
-    link_photos = list(dict.fromkeys(link_photos))
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
 
-    if link_photos:
-        phone = Phone.objects.create(
+        try:
+            WebDriverWait(driver, 30).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "br-prs-f")))
+
+        except:
+            print("Don't wait for loading page")
+
+
+        html = driver.page_source
+        soup = BeautifulSoup(html, "html.parser")
+
+        link_photos = []
+        photo_div = soup.find("div", class_="br-prs-f main-pictures-block slick-initialized slick-slider slick-vertical")
+        if photo_div:
             
-            photos=link_photos,
-            status="Done"
-    )
-    else:
-        print("No photos found, Phone object not created.")
+            for img_tag in photo_div.find_all("img"):
+                if img_tag.has_attr("src"):
+                    link_photos.append(img_tag["src"])
+                elif img_tag.has_attr("data-observe-src"):
+                    link_photos.append(img_tag["data-observe-src"])
+        else:
+            print('Don`t found div with class "br-prs-f main-pictures-block slick-initialized slick-slider slick-vertical"')
+        
+        link_photos = list(dict.fromkeys(link_photos))
 
-except Exception as e:
-    print(f"Error: {e}")
+        for item in link_photos:
+            print(item)
+            
+        if link_photos:
+            phone = Phone.objects.create(
+                
+                photos=link_photos
+        )
+            phone.save()
+        else:
+            print("No photos found, Phone object not created.")
+
+    except Exception as e:
+        print(f"Error: {e}")
