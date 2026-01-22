@@ -103,7 +103,16 @@ try:
             price = price.find_next('span').text.strip()
             print(price)
             break
-        
+    
+    link_photos = []
+    for color_div in soup.select('.slick-list draggable.slick-track'):
+        a_tag = color_div.find('a')
+        if a_tag and a_tag.has_attr('href'):
+            url = a_tag['href']
+            match = re.search(r'iPhone_16_Pro_Max_256GB_([A-Za-z_]+)-p', url)
+            if match:
+                color = match.group(1).replace('_', ' ')
+                colors.append(color)
 
 except AttributeError as e:
     print(f"Error extracting product name: {e}")
@@ -112,7 +121,7 @@ except AttributeError as e:
 
 
 
-    # price = models.CharField(max_length=100, null=True)    
+ 
     # promotional_price = models.CharField(max_length=100, null=True)      
     # product_code = models.CharField(max_length=255, null=True)  
     # number_of_reviews = models.CharField(max_length=255, null=True)   
