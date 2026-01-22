@@ -1,4 +1,4 @@
-"""Файл обращаеться к сайту и собирает информацию с каждого товара на странице, сохраняем все в модель Thing."""
+"""get the display resolution, screen diagonal and all the characteristics in general"""
 import sys
 import os
 import re
@@ -44,84 +44,85 @@ headers = {
     'TE': 'Trailers', 
 }
 
+
 response = requests.get(url, headers=headers)
 soup = BeautifulSoup(response.text, "html.parser")
 
-phone = Phone.objects.all()
-
-try:
-    display_block = None
-    for block in soup.find_all("div", class_="br-pr-chr-item"):
-        h3 = block.find("h3")
-        if h3 and "Дисплей" in h3.text:
-            display_block = block
-            break
-
-    if display_block:
-
-        diagonal_div = None
-        for div in display_block.find_all("div"):
-            link = div.find("a")
-            if link and "Діагональ екрану" in link.get("title", ""):
-                diagonal_div = div
+def get_characteristics(soup):
+    try:
+        display_block = None
+        for block in soup.find_all("div", class_="br-pr-chr-item"):
+            h3 = block.find("h3")
+            if h3 and "Дисплей" in h3.text:
+                display_block = block
                 break
 
-        if diagonal_div:
-            diagonal_value = diagonal_div.find("a").text.strip()
-      
-        else:
-            print("Don't found div with title diagonal_value")
+        if display_block:
 
-        resolution_div = None
-        for div in display_block.find_all("div"):
-            link = div.find("a")
-            if link and "Роздільна здатність екрану" in link.get("title", ""):
-                resolution_div = div
-                break
+            diagonal_div = None
+            for div in display_block.find_all("div"):
+                link = div.find("a")
+                if link and "Діагональ екрану" in link.get("title", ""):
+                    diagonal_div = div
+                    break
 
-        if resolution_div:
-            display_resolution = resolution_div.find("a").text.strip()
-         
-        else:
-            print("Don't found div with title resolution_value")
-
-    else:
-        print("Don't found display block")
-
-    characteristics = {}
-
-    for block in soup.find_all("div", class_="br-pr-chr-item"):
-
-        category = block.find("h3").text.strip()
-        characteristics[category] = {}
-
-        for div in block.find_all("div"):
-            spans = div.find_all("span")
-            if len(spans) >= 2:
-      
-                key = spans[0].text.strip()
-             
-                value = spans[1].text.strip()
-              
-                link = spans[1].find("a")
-                if link:
-                    value = link.text.strip()
-
-                characteristics[category][key] = value
-
-
-    for category, attrs in characteristics.items():
-        print(f"{category}:")
-        for key, value in attrs.items():
-            print(f"  {key}: {value}")
-
-    # phone = Phone.objects.create(
+            if diagonal_div:
+                diagonal_value = diagonal_div.find("a").text.strip()
         
-        #     screen_diagonal=diagonal_value,
-        #     display_resolution=display_resolution
-        #     characteristics=characteristics
-        # )
-        # print(f"Save: {phone}")
+            else:
+                print("Don't found div with title diagonal_value")
 
-except Exception as e:
-    print(f"Error: {e}")
+            resolution_div = None
+            for div in display_block.find_all("div"):
+                link = div.find("a")
+                if link and "Роздільна здатність екрану" in link.get("title", ""):
+                    resolution_div = div
+                    break
+
+            if resolution_div:
+                display_resolution = resolution_div.find("a").text.strip()
+            
+            else:
+                print("Don't found div with title resolution_value")
+
+        else:
+            print("Don't found display block")
+
+        characteristics = {}
+
+        for block in soup.find_all("div", class_="br-pr-chr-item"):
+
+            category = block.find("h3").text.strip()
+            characteristics[category] = {}
+
+            for div in block.find_all("div"):
+                spans = div.find_all("span")
+                if len(spans) >= 2:
+        
+                    key = spans[0].text.strip()
+                
+                    value = spans[1].text.strip()
+                
+                    link = spans[1].find("a")
+                    if link:
+                        value = link.text.strip()
+
+                    characteristics[category][key] = value
+
+
+        for category, attrs in characteristics.items():
+            print(f"{category}:")
+            for key, value in attrs.items():
+                print(f"  {key}: {value}")
+
+        phone = Phone.objects.create(
+            
+                screen_diagonal=diagonal_value,
+                display_resolution=display_resolution,
+                characteristics=characteristics,
+                status="Done")
+        if phone.save():
+            print(f"Save: {phone.screen_diagonal}, {phone.display_resolution}, {phone.characteristics}")
+
+    except Exception as e:
+        print(f"Error: {e}")
