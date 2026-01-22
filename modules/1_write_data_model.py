@@ -2,22 +2,28 @@
 import sys
 import os
 import re
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 workspace_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
 if workspace_dir not in sys.path:
     sys.path.insert(0, workspace_dir)
-import requests
-from bs4 import BeautifulSoup
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Исправленный путь к parser_app
+
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'brain_project', 'parser_app'))
 sys.path.append(BASE_DIR)
 
-import modules.load_django
 
+import modules.load_django
 from parser_app.models import Phone
 
 
@@ -101,21 +107,19 @@ try:
     for price in soup.find("div", class_="price-wrapper"):
         if price:
             price = price.find_next('span').text.strip()
-            print(price)
+            #print(price)
             break
     
-    link_photos = []
-    for color_div in soup.select('.slick-list draggable.slick-track'):
-        a_tag = color_div.find('a')
-        if a_tag and a_tag.has_attr('href'):
-            url = a_tag['href']
-            match = re.search(r'iPhone_16_Pro_Max_256GB_([A-Za-z_]+)-p', url)
-            if match:
-                color = match.group(1).replace('_', ' ')
-                colors.append(color)
 
-except AttributeError as e:
-    print(f"Error extracting product name: {e}")
+
+
+
+
+except Exception as e:
+    print(f"Произошла ошибка: {e}")
+
+# except AttributeError as e:
+#     print(f"Error extracting product name: {e}")
     
 
 
