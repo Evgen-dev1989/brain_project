@@ -97,11 +97,13 @@ try:
                 break
 
     #print(f"manufacturer: {manufacturer}")
+
     for price in soup.find("div", class_="price-wrapper"):
         if price:
             price = price.find_next('span').text.strip()
             print(price)
             break
+        
 
 except AttributeError as e:
     print(f"Error extracting product name: {e}")
