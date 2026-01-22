@@ -109,12 +109,6 @@ def get_characteristics(soup):
 
                     characteristics[category][key] = value
 
-
-        for category, attrs in characteristics.items():
-            print(f"{category}:")
-            for key, value in attrs.items():
-                print(f"  {key}: {value}")
-
         phone = Phone.objects.create(
             
                 screen_diagonal=diagonal_value,
