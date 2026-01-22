@@ -3,12 +3,6 @@ import sys
 import os
 import re
 import requests
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 
 
@@ -60,7 +54,7 @@ try:
     title_tag = soup.find("h1", class_="main-title")
     if title_tag:
         product_name = title_tag.text.strip()
-        #print(product_name)
+    
 
     colors = []
     for color_div in soup.select('.series-item.series-color'):
@@ -146,56 +140,15 @@ try:
 
 
 
+    phone = Phone.objects.create(
+            product_name=product_name,
+            manufacturer=manufacturer,
+            memory_capacity=memory_capacity,    
+            colors=colors
+        )
 
 
-    display_block = None
-    for block in soup.find_all("div", class_="br-pr-chr-item"):
-        h3 = block.find("h3")
-        if h3 and "Дисплей" in h3.text:
-            display_block = block
-            break
-    
-    if display_block:
-       
-        diagonal_div = None
-        for div in display_block.find_all("div"):
-            link = div.find("a")
-            if link and "Діагональ екрану" in link.get("title", ""):
-                diagonal_div = div
-                break
-    
-        if diagonal_div:
-  
-            diagonal_value = diagonal_div.find("a").text.strip()
-            phone.screen_diagonal = diagonal_value
-        
-        else:
-            print("Don't found div with title diagonal_value")
-
-        resolution_div = None
-        for div in display_block.find_all("div"):
-            link = div.find("a")
-            if link and "Роздільна здатність екрану" in link.get("title", ""):
-                resolution_div = div
-                break
-
-        if resolution_div:
-        
-            resolution_value = resolution_div.find("a").text.strip()
-            phone.diisplay_resolution = resolution_value
-           
-        else:
-            print("Don't found div with title resolution_value")
-    else:
-        print("Don't found display block")
-  
-
-
-
-
-
-
-    # phone.save()
+    phone.save()
 except Exception as e:
     print(f"Произошла ошибка: {e}")
 

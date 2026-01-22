@@ -72,7 +72,7 @@ try:
 
     if link_photos:
         phone = Phone.objects.create(
-            name="Apple iPhone 16 Pro Max 256GB Black Titanium",
+            
             photos=link_photos,
             status="Done"
     )
