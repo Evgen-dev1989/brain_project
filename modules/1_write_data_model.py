@@ -183,7 +183,7 @@ try:
         
             resolution_value = resolution_div.find("a").text.strip()
             phone.diisplay_resolution = resolution_value
-            print(f"Роздільна здатність екрану: {resolution_value}")
+           
         else:
             print("Don't found div with title resolution_value")
     else:
