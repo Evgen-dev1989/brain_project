@@ -1,3 +1,6 @@
+"""
+get links photos from product page and save to Phone model
+"""
 import sys
 import os
 import re

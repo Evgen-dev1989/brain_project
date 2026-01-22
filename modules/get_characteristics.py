@@ -48,7 +48,7 @@ headers = {
 response = requests.get(url, headers=headers)
 soup = BeautifulSoup(response.text, "html.parser")
 
-def get_characteristics(soup):
+def characteristics(soup):
     try:
         display_block = None
         for block in soup.find_all("div", class_="br-pr-chr-item"):

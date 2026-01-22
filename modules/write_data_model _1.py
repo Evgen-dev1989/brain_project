@@ -1,4 +1,4 @@
-"""Файл обращаеться к сайту и собирает информацию с каждого товара на странице, сохраняем все в модель Thing."""
+"""get data from soup and write to data model Phone"""
 import sys
 import os
 import re
@@ -23,7 +23,7 @@ sys.path.append(BASE_DIR)
 import modules.load_django
 from parser_app.models import Phone
 from get_characteristics import characteristics
-
+from get_links_photo import get_link_photos
 
 
 
@@ -113,7 +113,7 @@ def get_data(soup):
 
         phone = Phone.objects.create(
                 product_name=product_name,
-                nymber_of_reviews=number_of_reviews,
+                number_of_reviews=number_of_reviews,
                 price=price,
                 product_code=product_code,
                 manufacturer=manufacturer,
@@ -121,7 +121,7 @@ def get_data(soup):
                 colors=colors
             )
 
-
+        print(phone)
         phone.save()
     except AttributeError as e:
         print(f"Error: {e}")
@@ -151,6 +151,7 @@ def main():
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     get_data(soup)
+    get_link_photos(soup)
     characteristics(soup)
     
 if __name__ == "__main__":
