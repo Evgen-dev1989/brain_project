@@ -129,14 +129,73 @@ try:
 
 
 
+    number_of_reviews = soup.find("div", class_="fast-navigation-comments-body")
+    if number_of_reviews:
+
+        number_of_reviews_span = number_of_reviews.find('a')
+       
+        if number_of_reviews_span:
+            number_of_reviews = number_of_reviews_span.text.strip()
+            phone.number_of_reviews = number_of_reviews
+
+        else:
+            print(" don`t found span number_of_reviews_span")
+    else:
+        print("don't found number_of_reviews")
 
 
 
 
 
 
-    phone.save()
+    display_block = None
+    for block in soup.find_all("div", class_="br-pr-chr-item"):
+        h3 = block.find("h3")
+        if h3 and "Дисплей" in h3.text:
+            display_block = block
+            break
+    
+    if display_block:
+       
+        diagonal_div = None
+        for div in display_block.find_all("div"):
+            link = div.find("a")
+            if link and "Діагональ екрану" in link.get("title", ""):
+                diagonal_div = div
+                break
+    
+        if diagonal_div:
+  
+            diagonal_value = diagonal_div.find("a").text.strip()
+            phone.screen_diagonal = diagonal_value
+        
+        else:
+            print("Don't found div with title diagonal_value")
 
+        resolution_div = None
+        for div in display_block.find_all("div"):
+            link = div.find("a")
+            if link and "Роздільна здатність екрану" in link.get("title", ""):
+                resolution_div = div
+                break
+
+        if resolution_div:
+        
+            resolution_value = resolution_div.find("a").text.strip()
+            phone.diisplay_resolution = resolution_value
+            print(f"Роздільна здатність екрану: {resolution_value}")
+        else:
+            print("Don't found div with title resolution_value")
+    else:
+        print("Don't found display block")
+  
+
+
+
+
+
+
+    # phone.save()
 except Exception as e:
     print(f"Произошла ошибка: {e}")
 
