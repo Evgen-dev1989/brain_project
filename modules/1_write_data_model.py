@@ -3,10 +3,13 @@ import sys
 import os
 import re
 import requests
-from bs4 import BeautifulSoup
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -107,13 +110,32 @@ try:
     for price in soup.find("div", class_="price-wrapper"):
         if price:
             price = price.find_next('span').text.strip()
-            #print(price)
+            phone.price = price
             break
+
+
     
+    product_code_div = soup.find("div", class_="br-pr-code br-code-block")
+    if product_code_div:
+  
+        product_code_span = product_code_div.find("span", class_="br-pr-code-val")
+        if product_code_span:
+            product_code = product_code_span.text.strip()
+            phone.product_code = product_code
+        else:
+            print("don't found span with class 'br-pr-code")
+    else:
+        print("don't found div with class 'br-pr-code br-code-block")
 
 
 
 
+
+
+
+
+
+    phone.save()
 
 except Exception as e:
     print(f"Произошла ошибка: {e}")
