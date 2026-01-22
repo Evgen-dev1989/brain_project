@@ -65,7 +65,7 @@ try:
             if match:
                 color = match.group(1).replace('_', ' ')
                 colors.append(color)
-    #print(colors)
+
 
 
     memory_capacity = []
@@ -88,7 +88,7 @@ try:
                     memory_capacity.append(value)
 
     memory_capacity = list(dict.fromkeys(memory_capacity))
-    #print(memory_capacity)
+
 
 
     manufacturer = None
@@ -99,7 +99,7 @@ try:
                 manufacturer = next_span.text.strip()
                 break
 
-    #print(f"manufacturer: {manufacturer}")
+
 
     for price in soup.find("div", class_="price-wrapper"):
         if price:
@@ -136,8 +136,6 @@ try:
             print(" don`t found span number_of_reviews_span")
     else:
         print("don't found number_of_reviews")
-
-
 
 
     phone = Phone.objects.create(
