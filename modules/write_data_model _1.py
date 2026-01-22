@@ -22,7 +22,7 @@ sys.path.append(BASE_DIR)
 
 import modules.load_django
 from parser_app.models import Phone
-from 3_get_characteristics import get_characteristics
+from get_characteristics import get_characteristics
 
 
 url = "https://brain.com.ua/ukr/Mobilniy_telefon_Apple_iPhone_16_Pro_Max_256GB_Black_Titanium-p1145443.html"
