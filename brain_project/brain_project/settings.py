@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'brain_project',
     'django.contrib.postgres',
-    'parser_app',
+    'parser_app'
 ]
 
 MIDDLEWARE = [

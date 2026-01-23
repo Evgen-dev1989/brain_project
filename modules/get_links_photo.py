@@ -70,19 +70,19 @@ def get_link_photos(soup):
         
         link_photos = list(dict.fromkeys(link_photos))
 
-        # for item in link_photos:
-        #     print(item)
+        for item in link_photos:
+            print(item)
             
         if link_photos:
-            for item in link_photos:
-                print(item)
+          
             phone = Phone.objects.create(
                 
                 photos=link_photos
         )
-            phone.save()
+   
         else:
             print("No photos found, Phone object not created.")
 
     except Exception as e:
         print(f"Error: {e}")
+

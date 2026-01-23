@@ -122,7 +122,7 @@ def get_data(soup):
             )
 
         print(phone)
-        phone.save()
+ 
     except AttributeError as e:
         print(f"Error: {e}")
 
