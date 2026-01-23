@@ -44,7 +44,8 @@ def get_data(soup):
 
     except AttributeError as e:
         print(f"Error extracting product name: {e}")
-
+        value = None
+        
     try:
         colors = []
         for color_div in soup.select('.series-item.series-color'):
@@ -60,6 +61,7 @@ def get_data(soup):
 
     except AttributeError as e:
         print(f"Error extracting colors: {e}")
+        value = None
 
     try:
         memory_capacity = []
@@ -85,6 +87,7 @@ def get_data(soup):
         print(f"Memory Capacity: {memory_capacity}")
     except AttributeError as e:
         print(f"Error extracting memory capacity: {e}")
+        value = None
 
     try:
         manufacturer = None
@@ -97,7 +100,7 @@ def get_data(soup):
         print(f"Manufacturer: {manufacturer}")
     except AttributeError as e:
         print(f"Error extracting price: {e}")
-
+        value = None
     
     try:
         for price in soup.find("div", class_="price-wrapper"):
@@ -107,7 +110,7 @@ def get_data(soup):
         print(f"Price: {price}")
     except AttributeError as e:
         print(f"Error extracting price: {e}")   
-
+        value = None
 
 
 
@@ -128,6 +131,7 @@ def get_data(soup):
         print(f"Product Code: {product_code}")
     except AttributeError as e:
         print(f"Error extracting product code: {e}")
+        value = None
 
 
     try:
@@ -146,6 +150,7 @@ def get_data(soup):
         print(f"Number of Reviews: {number_of_reviews}")
     except AttributeError as e:
         print(f"Error extracting number of reviews: {e}")
+        value = None
 
 
 
@@ -174,9 +179,7 @@ def get_data(soup):
             phone.save()
     except AttributeError as e:
         print(f"Error saving to database: {e}")
-
-    except Exception as e:
-        print(f"Error: {e}")
+        value = None
 
 
 def main():
@@ -202,6 +205,7 @@ def main():
 
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
+
     get_data(soup)
     get_link_photos(soup)
     characteristics(soup)
