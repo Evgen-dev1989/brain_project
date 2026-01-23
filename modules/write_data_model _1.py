@@ -18,6 +18,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'brain_project', 'parser_app'))
 sys.path.append(BASE_DIR)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'brain_project')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'brain_project', 'parser_app')))
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'brain_project.settings')
+django.setup()
 
 
 import modules.load_django
@@ -33,7 +38,7 @@ def get_data(soup):
         title_tag = soup.find("h1", class_="main-title")
         if title_tag:
             product_name = title_tag.text.strip()
-        
+        print(product_name)
 
         colors = []
         for color_div in soup.select('.series-item.series-color'):
@@ -111,18 +116,28 @@ def get_data(soup):
             print("don't found number_of_reviews")
 
 
-        phone = Phone.objects.create(
-                product_name=product_name,
-                number_of_reviews=number_of_reviews,
-                price=price,
-                product_code=product_code,
-                manufacturer=manufacturer,
-                memory_capacity=memory_capacity,    
-                colors=colors
-            )
+        phone, created = Phone.objects.get_or_create(
+            product_code=product_code,
+            defaults={
+                'product_name': product_name,
+                'number_of_reviews': number_of_reviews,
+                'price': price,
+                'manufacturer': manufacturer,
+                'memory_capacity': memory_capacity,
+                'colors': colors
+            }
+        )
 
-        print(phone)
- 
+        if not created:
+       
+            phone.product_name = product_name
+            phone.number_of_reviews = number_of_reviews
+            phone.price = price
+            phone.manufacturer = manufacturer
+            phone.memory_capacity = memory_capacity
+            phone.colors = colors
+            phone.save()
+    
     except AttributeError as e:
         print(f"Error: {e}")
 
@@ -151,9 +166,10 @@ def main():
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     get_data(soup)
-    get_link_photos(soup)
-    characteristics(soup)
-    
+    # get_link_photos(soup)
+    # characteristics(soup)
+    phone_info = Phone.objects.all()
+    print(f"Created Phone: {phone_info}")
 if __name__ == "__main__":
     main()
 

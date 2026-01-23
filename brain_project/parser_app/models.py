@@ -12,7 +12,7 @@ class Phone(models.Model):
     manufacturer = models.CharField(max_length=255, null=True)   
     price = models.CharField(max_length=100, null=True)    
     promotional_price = models.CharField(max_length=100, null=True)      
-    product_code = models.CharField(max_length=255, null=True)  
+    product_code = models.CharField(max_length=255, null=True, unique=True)
     number_of_reviews = models.CharField(max_length=255, null=True)   
     screen_diagonal = models.CharField(max_length=255, null=True)         
     display_resolution = models.CharField(max_length=50, null=True)       
@@ -24,7 +24,7 @@ class Phone(models.Model):
     status = models.CharField(max_length=50, default="New", null=True)  # Статус обработки: New → Done
 
     def __str__(self):
-        return self.name
+        return self.product_name or "Unnamed Phone"
 
 
 
