@@ -35,12 +35,17 @@ from get_links_photo import get_link_photos
 
 
 def get_data(soup):
+
     try:
         title_tag = soup.find("h1", class_="main-title")
         if title_tag:
             product_name = title_tag.text.strip()
         print(f"product name: {product_name}")
 
+    except AttributeError as e:
+        print(f"Error extracting product name: {e}")
+
+    try:
         colors = []
         for color_div in soup.select('.series-item.series-color'):
             a_tag = color_div.find('a')
@@ -53,7 +58,10 @@ def get_data(soup):
                     colors.append(color)
         print(f"Colors: {colors}")
 
+    except AttributeError as e:
+        print(f"Error extracting colors: {e}")
 
+    try:
         memory_capacity = []
         valid_memory_values = {"256 GB", "512 GB", "1 TB"} 
 
@@ -75,7 +83,10 @@ def get_data(soup):
                         
         memory_capacity = list(dict.fromkeys(memory_capacity))
         print(f"Memory Capacity: {memory_capacity}")
+    except AttributeError as e:
+        print(f"Error extracting memory capacity: {e}")
 
+    try:
         manufacturer = None
         for span in soup.find_all('span'):
             if span.text.strip() == 'Виробник':
@@ -84,14 +95,25 @@ def get_data(soup):
                     manufacturer = next_span.text.strip()
                     break
         print(f"Manufacturer: {manufacturer}")
+    except AttributeError as e:
+        print(f"Error extracting price: {e}")
 
+    
+    try:
         for price in soup.find("div", class_="price-wrapper"):
             if price:
                 price = price.find_next('span').text.strip()
                 break
         print(f"Price: {price}")
+    except AttributeError as e:
+        print(f"Error extracting price: {e}")   
 
-        
+
+
+
+
+
+    try:
         product_code_div = soup.find("div", class_="br-pr-code br-code-block")
         if product_code_div:
     
@@ -104,7 +126,11 @@ def get_data(soup):
         else:
             print("don't found div with class 'br-pr-code br-code-block")
         print(f"Product Code: {product_code}")
+    except AttributeError as e:
+        print(f"Error extracting product code: {e}")
 
+
+    try:
         number_of_reviews = soup.find("div", class_="fast-navigation-comments-body")
         if number_of_reviews:
 
@@ -118,7 +144,13 @@ def get_data(soup):
         else:
             print("don't found number_of_reviews")
         print(f"Number of Reviews: {number_of_reviews}")
+    except AttributeError as e:
+        print(f"Error extracting number of reviews: {e}")
 
+
+
+
+    try:    
         phone, created = Phone.objects.get_or_create(
             product_code=product_code,
             defaults={
@@ -140,8 +172,10 @@ def get_data(soup):
             phone.memory_capacity = memory_capacity
             phone.colors = colors
             phone.save()
-    
     except AttributeError as e:
+        print(f"Error saving to database: {e}")
+
+    except Exception as e:
         print(f"Error: {e}")
 
 
