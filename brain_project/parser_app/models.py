@@ -24,8 +24,7 @@ class Phone(models.Model):
     status = models.CharField(max_length=50, default="New", null=True)  # Статус обработки: New → Done
 
     def __str__(self):
-        return self.product_name or "Unnamed Phone"
-
+        return f"Phone: {self.product_name or 'Unnamed Phone'}, Colors: {', '.join(self.colors or [])}, Memory: {', '.join(self.memory_capacity or [])}, Manufacturer: {self.manufacturer or 'Unknown'}, Price: {self.price or 'N/A'}, Product Code: {self.product_code or 'N/A'}"
 
 
 

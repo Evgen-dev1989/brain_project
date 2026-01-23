@@ -38,7 +38,7 @@ def get_data(soup):
         title_tag = soup.find("h1", class_="main-title")
         if title_tag:
             product_name = title_tag.text.strip()
-        print(product_name)
+        #print(product_name)
 
         colors = []
         for color_div in soup.select('.series-item.series-color'):
@@ -166,10 +166,12 @@ def main():
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     get_data(soup)
-    # get_link_photos(soup)
-    # characteristics(soup)
-    phone_info = Phone.objects.all()
-    print(f"Created Phone: {phone_info}")
+    get_link_photos(soup)
+    characteristics(soup)
+    phone_info = list(Phone.objects.all())
+    for phone_info in phone_info:
+        print(f"info : {phone_info}")
+
 if __name__ == "__main__":
     main()
 

@@ -116,7 +116,8 @@ def characteristics(soup):
                 characteristics=characteristics,
                 status="Done")
         if phone:
-            print(f"Save: {phone.screen_diagonal}, {phone.display_resolution}, {phone.characteristics}")
+            print(f"screen diagonal: {phone.screen_diagonal}, "
+                  f"{phone.display_resolution}, {phone.characteristics}")
 
     except Exception as e:
         print(f"Error: {e}")
