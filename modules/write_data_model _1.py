@@ -4,7 +4,8 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
-
+import csv
+import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -174,6 +175,40 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+   
+
+
+    # output_path = os.path.join(os.path.dirname(__file__), '..', 'results', 'result_brain_project.csv')
+    # output_path = os.path.abspath(output_path)
+
+    # fieldnames = [
+    #     'product_name', 'colors', 'memory_capacity', 'manufacturer', 'price', 'promotional_price',
+    #     'product_code', 'number_of_reviews', 'screen_diagonal', 'display_resolution',
+    #     'characteristics', 'photos', 'link', 'status'
+    # ]
+
+    # with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
+    #     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    #     writer.writeheader()
+    #     for phone in Phone.objects.all():
+    #         writer.writerow({
+    #             'product_name': phone.product_name,
+    #             'colors': json.dumps(phone.colors, ensure_ascii=False),
+    #             'memory_capacity': json.dumps(phone.memory_capacity, ensure_ascii=False),
+    #             'manufacturer': phone.manufacturer,
+    #             'price': phone.price,
+    #             'promotional_price': phone.promotional_price,
+    #             'product_code': phone.product_code,
+    #             'number_of_reviews': phone.number_of_reviews,
+    #             'screen_diagonal': phone.screen_diagonal,
+    #             'display_resolution': phone.display_resolution,
+    #             'characteristics': json.dumps(phone.characteristics, ensure_ascii=False),
+    #             'photos': json.dumps(phone.photos, ensure_ascii=False),
+    #             'link': phone.link,
+    #             'status': phone.status,
+    #         })
 
 
 
