@@ -34,7 +34,7 @@ from parser_app.models import Phone
 
 def get_link_photos(soup):
     try:
-
+        
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service)
 
@@ -70,10 +70,12 @@ def get_link_photos(soup):
         
         link_photos = list(dict.fromkeys(link_photos))
 
-        for item in link_photos:
-            print(item)
+        # for item in link_photos:
+        #     print(item)
             
         if link_photos:
+            for item in link_photos:
+                print(item)
             phone = Phone.objects.create(
                 
                 photos=link_photos
