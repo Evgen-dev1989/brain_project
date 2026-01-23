@@ -4,7 +4,7 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
-
+from pprint import pprint
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -47,6 +47,19 @@ headers = {
 
 response = requests.get(url, headers=headers)
 soup = BeautifulSoup(response.text, "html.parser")
+
+
+def clean_value(val):
+    import re
+    if isinstance(val, str):
+        cleaned = val.replace('\xa0', ' ')
+        cleaned = re.sub(r'[ \t]+', ' ', cleaned)  # collapse spaces/tabs
+        cleaned = re.sub(r'\n+', '\n', cleaned)   # collapse newlines
+        cleaned = re.sub(r' *, *', ', ', cleaned)   # normalize comma spacing
+        return cleaned.strip()
+    if isinstance(val, dict):
+        return {k: clean_value(v) for k, v in val.items()}
+    return val
 
 def characteristics(soup):
     try:
@@ -109,15 +122,19 @@ def characteristics(soup):
 
                     characteristics[category][key] = value
 
+        # Clean up all values in characteristics before saving
+        characteristics_clean = clean_value(characteristics)
         phone = Phone.objects.create(
-            
-                screen_diagonal=diagonal_value,
-                display_resolution=display_resolution,
-                characteristics=characteristics,
-                status="Done")
+            screen_diagonal=diagonal_value,
+            display_resolution=display_resolution,
+            characteristics=characteristics_clean,
+            status="Done"
+        )
         if phone:
-            print(f"screen diagonal: {phone.screen_diagonal}, "
-                  f"{phone.display_resolution}, {phone.characteristics}")
-
+            from pprint import pprint
+            print(f"screen diagonal: {phone.screen_diagonal}")
+            print(f"display_resolution: {phone.display_resolution}")
+            print("characteristics:")
+            pprint(phone.characteristics, sort_dicts=False, width=120)
     except Exception as e:
         print(f"Error: {e}")

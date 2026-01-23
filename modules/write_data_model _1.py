@@ -38,7 +38,7 @@ def get_data(soup):
         title_tag = soup.find("h1", class_="main-title")
         if title_tag:
             product_name = title_tag.text.strip()
-        #print(product_name)
+        print(f"product name: {product_name}")
 
         colors = []
         for color_div in soup.select('.series-item.series-color'):
@@ -48,7 +48,9 @@ def get_data(soup):
                 match = re.search(r'iPhone_16_Pro_Max_256GB_([A-Za-z_]+)-p', url)
                 if match:
                     color = match.group(1).replace('_', ' ')
+               
                     colors.append(color)
+        print(f"Colors: {colors}")
 
 
         memory_capacity = []
@@ -69,9 +71,9 @@ def get_data(soup):
                     value = match.group(0).upper() 
                     if value in valid_memory_values:  
                         memory_capacity.append(value)
-
+                        
         memory_capacity = list(dict.fromkeys(memory_capacity))
-
+        print(f"Memory Capacity: {memory_capacity}")
 
         manufacturer = None
         for span in soup.find_all('span'):
@@ -80,13 +82,13 @@ def get_data(soup):
                 if next_span:
                     manufacturer = next_span.text.strip()
                     break
-
+        print(f"Manufacturer: {manufacturer}")
 
         for price in soup.find("div", class_="price-wrapper"):
             if price:
                 price = price.find_next('span').text.strip()
                 break
-
+        print(f"Price: {price}")
 
         
         product_code_div = soup.find("div", class_="br-pr-code br-code-block")
@@ -100,7 +102,7 @@ def get_data(soup):
                 print("don't found span with class 'br-pr-code")
         else:
             print("don't found div with class 'br-pr-code br-code-block")
-
+        print(f"Product Code: {product_code}")
 
         number_of_reviews = soup.find("div", class_="fast-navigation-comments-body")
         if number_of_reviews:
@@ -114,7 +116,7 @@ def get_data(soup):
                 print(" don`t found span number_of_reviews_span")
         else:
             print("don't found number_of_reviews")
-
+        print(f"Number of Reviews: {number_of_reviews}")
 
         phone, created = Phone.objects.get_or_create(
             product_code=product_code,
@@ -168,9 +170,7 @@ def main():
     get_data(soup)
     get_link_photos(soup)
     characteristics(soup)
-    phone_info = list(Phone.objects.all())
-    for phone_info in phone_info:
-        print(f"info : {phone_info}")
+ 
 
 if __name__ == "__main__":
     main()
