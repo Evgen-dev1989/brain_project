@@ -64,40 +64,39 @@ def clean_value(val):
 def characteristics(soup):
     try:
         display_block = None
+
         for block in soup.find_all("div", class_="br-pr-chr-item"):
             h3 = block.find("h3")
-            if h3 and "Дисплей" in h3.text:
+            if h3 and re.search(r"диспле[йя]|display", h3.text, re.IGNORECASE):
                 display_block = block
                 break
 
         if display_block:
-
             diagonal_div = None
+
             for div in display_block.find_all("div"):
                 link = div.find("a")
-                if link and "Діагональ екрану" in link.get("title", ""):
+                if link and re.search(r"диагонал|diagonal", link.get("title", ""), re.IGNORECASE):
                     diagonal_div = div
                     break
 
             if diagonal_div:
                 diagonal_value = diagonal_div.find("a").text.strip()
-        
             else:
                 print("Don't found div with title diagonal_value")
 
             resolution_div = None
+       
             for div in display_block.find_all("div"):
                 link = div.find("a")
-                if link and "Роздільна здатність екрану" in link.get("title", ""):
+                if link and re.search(r"разреш|роздільн|resolution", link.get("title", ""), re.IGNORECASE):
                     resolution_div = div
                     break
 
             if resolution_div:
                 display_resolution = resolution_div.find("a").text.strip()
-            
             else:
                 print("Don't found div with title resolution_value")
-
         else:
             print("Don't found display block")
 
@@ -122,7 +121,7 @@ def characteristics(soup):
 
                     characteristics[category][key] = value
 
-        # Clean up all values in characteristics before saving
+   
         characteristics_clean = clean_value(characteristics)
         phone = Phone.objects.create(
             screen_diagonal=diagonal_value,
