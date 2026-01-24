@@ -44,7 +44,7 @@ def get_data(soup):
 
     except AttributeError as e:
         print(f"Error extracting product name: {e}")
-        value = None
+        product_name = None
         
     try:
         colors = []
@@ -61,7 +61,7 @@ def get_data(soup):
 
     except AttributeError as e:
         print(f"Error extracting colors: {e}")
-        value = None
+        colors  = None
 
     try:
         memory_capacity = []
@@ -87,7 +87,7 @@ def get_data(soup):
         print(f"Memory Capacity: {memory_capacity}")
     except AttributeError as e:
         print(f"Error extracting memory capacity: {e}")
-        value = None
+        memory_capacity = None
 
     try:
         manufacturer = None
@@ -100,7 +100,7 @@ def get_data(soup):
         print(f"Manufacturer: {manufacturer}")
     except AttributeError as e:
         print(f"Error extracting price: {e}")
-        value = None
+        manufacturer = None
     
     try:
         for price in soup.find("div", class_="price-wrapper"):
@@ -110,7 +110,7 @@ def get_data(soup):
         print(f"Price: {price}")
     except AttributeError as e:
         print(f"Error extracting price: {e}")   
-        value = None
+        price  = None
 
 
 
@@ -131,7 +131,7 @@ def get_data(soup):
         print(f"Product Code: {product_code}")
     except AttributeError as e:
         print(f"Error extracting product code: {e}")
-        value = None
+        product_code = None
 
 
     try:
@@ -150,7 +150,7 @@ def get_data(soup):
         print(f"Number of Reviews: {number_of_reviews}")
     except AttributeError as e:
         print(f"Error extracting number of reviews: {e}")
-        value = None
+        number_of_reviews = None
 
 
 

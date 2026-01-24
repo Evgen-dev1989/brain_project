@@ -83,6 +83,7 @@ def get_link_photos(soup):
         else:
             print("No photos found, Phone object not created.")
 
-    except Exception as e:
+    except AttributeError as e:
         print(f"Error: {e}")
+        value = None
 
