@@ -31,30 +31,13 @@ sys.path.append(BASE_DIR)
 import modules.load_django
 from parser_app.models import Phone
 
-service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service)
 
 
-url = "https://brain.com.ua/ukr/Mobilniy_telefon_Apple_iPhone_16_Pro_Max_256GB_Black_Titanium-p1145443.html"
-driver.get(url)
 
-driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-
-try:
-    WebDriverWait(driver, 30).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "br-prs-f")))
-
-except:
-    print("Don't wait for loading page WebDriverWait")
-
-
-html = driver.page_source
-soup = BeautifulSoup(html, "html.parser")
-
-def get_link_photos(soup):
-
+def get_link_photos():
         
+
+
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service)
 
@@ -65,16 +48,14 @@ def get_link_photos(soup):
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
 
-        try:
-            WebDriverWait(driver, 30).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "br-prs-f")))
-
-        except:
-            print("Don't wait for loading page WebDriverWait")
-
+        WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "br-prs-f")))
 
         html = driver.page_source
         soup = BeautifulSoup(html, "html.parser")
+
+
+
 
         link_photos = []
         photo_div = soup.find("div", class_="br-prs-f main-pictures-block slick-initialized slick-slider slick-vertical")
@@ -90,8 +71,6 @@ def get_link_photos(soup):
         
         link_photos = list(dict.fromkeys(link_photos))
 
-        for item in link_photos:
-            print(item)
             
         try:
           
@@ -105,7 +84,8 @@ def get_link_photos(soup):
             link_photos = None
 
         driver.quit()
+        print(link_photos)
 
-get_link_photos(soup)
+#get_link_photos(soup)
 
 

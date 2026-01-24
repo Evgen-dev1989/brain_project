@@ -37,10 +37,13 @@ from get_links_photo import get_link_photos
 
 def get_data(soup):
 
+    phone_general = {}
+
     try:
         title_tag = soup.find("h1", class_="main-title")
         if title_tag:
             product_name = title_tag.text.strip()
+            phone_general['product_name'] = product_name
         #print(f"product name: {product_name}")
 
     except AttributeError as e:
@@ -59,6 +62,7 @@ def get_data(soup):
                
                     colors.append(color)
         #print(f"Colors: {colors}")
+        phone_general['colors'] = colors
 
     except AttributeError as e:
         print(f"Error extracting colors: {e}")
@@ -86,6 +90,7 @@ def get_data(soup):
                         
         memory_capacity = list(dict.fromkeys(memory_capacity))
         #print(f"Memory Capacity: {memory_capacity}")
+        phone_general['memory_capacity'] = memory_capacity
 
     except AttributeError as e:
         print(f"Error extracting memory capacity: {e}")
@@ -100,6 +105,7 @@ def get_data(soup):
                     manufacturer = next_span.text.strip()
                     break
         #print(f"Manufacturer: {manufacturer}")
+        phone_general['manufacturer'] = manufacturer
 
     except AttributeError as e:
         print(f"Error extracting price: {e}")
@@ -109,6 +115,7 @@ def get_data(soup):
         for price in soup.find("div", class_="price-wrapper"):
             if price:
                 price = price.find_next('span').text.strip()
+                phone_general['price'] = price
                 break
         #print(f"Price: {price}")
     except AttributeError as e:
@@ -126,7 +133,7 @@ def get_data(soup):
             product_code_span = product_code_div.find("span", class_="br-pr-code-val")
             if product_code_span:
                 product_code = product_code_span.text.strip()
-
+                phone_general['product_code'] = product_code
             else:
                 print("don't found span with class 'br-pr-code")
         else:
@@ -146,7 +153,7 @@ def get_data(soup):
         
             if number_of_reviews_span:
                 number_of_reviews = number_of_reviews_span.text.strip()
-            
+                phone_general['number_of_reviews'] = number_of_reviews
             else:
                 print(" don`t found span number_of_reviews_span")
         else:
@@ -158,9 +165,11 @@ def get_data(soup):
         number_of_reviews = None
 
 
+    print(phone_general)
 
+    try:
+        
 
-    try:    
         phone = Phone.objects.get_or_create(
             product_name = product_name,
             number_of_reviews = number_of_reviews,
@@ -169,7 +178,7 @@ def get_data(soup):
             memory_capacity = memory_capacity,
             colors = colors,
             status="Done")
-            
+          
 
     except AttributeError as e:
         print(f"Error saving to database: {e}")
@@ -201,28 +210,9 @@ def main():
     soup = BeautifulSoup(response.text, "html.parser")
 
     get_data(soup)
-    get_link_photos(soup)
+    get_link_photos()
     characteristics(soup)
 
-    all_data = {}
-    info = Phone.objects.all()
-    for item in info:
-        all_data[item.product_code] = {
-            'product_name': item.product_name,
-            'colors': item.colors,
-            'memory_capacity': item.memory_capacity,
-            'manufacturer': item.manufacturer,
-            'price': item.price,
-            'promotional_price': item.promotional_price,
-            'product_code': item.product_code,
-            'number_of_reviews': item.number_of_reviews,
-            'screen_diagonal': item.screen_diagonal,
-            'display_resolution': item.display_resolution,
-            'characteristics': item.characteristics,
-            'photos': item.photos,
-            'status': item.status,
-        }
-    pprint(all_data, sort_dicts=False, width=120)
 
 if __name__ == "__main__":
     main()

@@ -144,14 +144,13 @@ def characteristics(soup):
             phone = None    
 
 
-        # if phone:
-        #     from pprint import pprint
-        #     print(f"screen diagonal: {phone.screen_diagonal}")
-        #     print(f"display_resolution: {phone.display_resolution}")
-        #     print("characteristics:")
-        #     pprint(phone.characteristics, sort_dicts=False, width=120)
+        if phone:
+        
+            print(f"screen diagonal: {phone.screen_diagonal}")
+            print(f"display_resolution: {phone.display_resolution}")
+            print("characteristics:")
+            pprint(phone.characteristics, sort_dicts=False, width=120)
 
     except Exception as e:
         print(f"Error: {e}")
 
-characteristics(soup)
