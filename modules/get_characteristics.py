@@ -63,8 +63,11 @@ def clean_value(val):
 
 def characteristics(soup):
 
+
     try:
         display_block = None
+        diagonal_value = None
+        display_resolution = None
 
         for block in soup.find_all("div", class_="br-pr-chr-item"):
             h3 = block.find("h3")
@@ -73,36 +76,30 @@ def characteristics(soup):
                 break
 
         if display_block:
-
-
             try:
-                diagonal_div = None
-
-                for div in display_block.find_all("div"):
-                    link = div.find("a")
-                    if link and re.search(r"диагонал|diagonal", link.get("title", ""), re.IGNORECASE):
-                        diagonal_div = div
+                diagonal_value = None
+        
+              
+                spans = list(display_block.find_all("span"))
+                for idx, span in enumerate(spans):
+                    if re.search(r"диагонал|diagonal|екрану|экрана", span.get_text(), re.IGNORECASE):
+           
+                        if idx + 1 < len(spans):
+                            diagonal_value = spans[idx + 1].get_text(strip=True)
                         break
-
-                if diagonal_div:
-                    diagonal_value = diagonal_div.find("a").text.strip()
-                else:
-                    print("Don't found div with title diagonal_value")
-
+                if diagonal_value is None:
+                    print("Don't found span or <a> with diagonal value")
             except AttributeError as e:
                 print(f"Error finding diagonal value: {e}")
                 diagonal_value = None
 
-
             try:
                 resolution_div = None
-        
                 for div in display_block.find_all("div"):
                     link = div.find("a")
                     if link and re.search(r"разреш|роздільн|resolution", link.get("title", ""), re.IGNORECASE):
                         resolution_div = div
                         break
-
                 if resolution_div:
                     display_resolution = resolution_div.find("a").text.strip()
                 else:
@@ -110,53 +107,51 @@ def characteristics(soup):
             except AttributeError as e:
                 print(f"Error finding resolution value: {e}")
                 display_resolution = None
+        else:
+            print("Don't found display block")
+
+        try:
+            characteristics = {}
+            for block in soup.find_all("div", class_="br-pr-chr-item"):
+                h3 = block.find("h3")
+                if not h3:
+                    continue
+                category = h3.text.strip()
+                characteristics[category] = {}
+                for div in block.find_all("div"):
+                    spans = div.find_all("span")
+                    if len(spans) >= 2:
+                        key = spans[0].text.strip()
+                        value = spans[1].text.strip()
+                        link = spans[1].find("a")
+                        if link:
+                            value = link.text.strip()
+                        characteristics[category][key] = value
+        except AttributeError as e:
+            print(f"Error finding characteristics value: {e}")
+            characteristics = None
+        try:
+            characteristics_clean = clean_value(characteristics)
+            phone, _ = Phone.objects.get_or_create(
+                screen_diagonal=diagonal_value,
+                display_resolution=display_resolution,
+                characteristics=characteristics_clean,
+                status="Done"
+            )
+
+        except AttributeError as e:
+            print(f"Error saving to database: {e}")
+            phone = None    
 
 
-
-
-
-            else:
-                print("Don't found display block")
-        
-            try:
-                characteristics = {}
-
-                for block in soup.find_all("div", class_="br-pr-chr-item"):
-
-                    category = block.find("h3").text.strip()
-                    characteristics[category] = {}
-
-                    for div in block.find_all("div"):
-                        spans = div.find_all("span")
-                        if len(spans) >= 2:
-                
-                            key = spans[0].text.strip()
-                        
-                            value = spans[1].text.strip()
-                        
-                            link = spans[1].find("a")
-                            if link:
-                                value = link.text.strip()
-
-                            characteristics[category][key] = value
-
-            except AttributeError as e:
-                print(f"Error finding characteristics value: {e}")
-                characteristics = None
-   
-        characteristics_clean = clean_value(characteristics)
-        phone = Phone.objects.create(
-            screen_diagonal=diagonal_value,
-            display_resolution=display_resolution,
-            characteristics=characteristics_clean,
-            status="Done"
-        )
-        if phone:
-            from pprint import pprint
-            print(f"screen diagonal: {phone.screen_diagonal}")
-            print(f"display_resolution: {phone.display_resolution}")
-            print("characteristics:")
-            pprint(phone.characteristics, sort_dicts=False, width=120)
+        # if phone:
+        #     from pprint import pprint
+        #     print(f"screen diagonal: {phone.screen_diagonal}")
+        #     print(f"display_resolution: {phone.display_resolution}")
+        #     print("characteristics:")
+        #     pprint(phone.characteristics, sort_dicts=False, width=120)
 
     except Exception as e:
         print(f"Error: {e}")
+
+characteristics(soup)

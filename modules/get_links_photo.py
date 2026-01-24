@@ -31,9 +31,29 @@ sys.path.append(BASE_DIR)
 import modules.load_django
 from parser_app.models import Phone
 
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service)
+
+
+url = "https://brain.com.ua/ukr/Mobilniy_telefon_Apple_iPhone_16_Pro_Max_256GB_Black_Titanium-p1145443.html"
+driver.get(url)
+
+driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+
+try:
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "br-prs-f")))
+
+except:
+    print("Don't wait for loading page WebDriverWait")
+
+
+html = driver.page_source
+soup = BeautifulSoup(html, "html.parser")
 
 def get_link_photos(soup):
-    try:
+
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service)
@@ -50,7 +70,7 @@ def get_link_photos(soup):
                 EC.presence_of_element_located((By.CLASS_NAME, "br-prs-f")))
 
         except:
-            print("Don't wait for loading page")
+            print("Don't wait for loading page WebDriverWait")
 
 
         html = driver.page_source
@@ -73,17 +93,19 @@ def get_link_photos(soup):
         for item in link_photos:
             print(item)
             
-        if link_photos:
+        try:
           
-            phone = Phone.objects.create(
+            phone = Phone.objects.get_or_create(
                 
                 photos=link_photos
         )
    
-        else:
-            print("No photos found, Phone object not created.")
+        except Exception as e:
+            print(f"Error saving Phone object: {e}")
+            link_photos = None
 
-    except AttributeError as e:
-        print(f"Error: {e}")
-        value = None
+        driver.quit()
+
+get_link_photos(soup)
+
 
