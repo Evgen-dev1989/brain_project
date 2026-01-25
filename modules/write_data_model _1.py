@@ -4,9 +4,8 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
-import csv
-import json
 from pprint import pprint
+import django
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -22,7 +21,7 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'brain_
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'brain_project')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'brain_project', 'parser_app')))
-import django
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'brain_project.settings')
 django.setup()
 
